@@ -3,7 +3,7 @@ COMP = c++
 CFLAGS = -g -Wall -Wextra -Werror -std=c++98
 
 # Normal
-NAME = Whatever
+NAME = Divide_and_conquer
 FUNC = main.cpp
 OBJS = $(FUNC:.cpp=.o)
 
