@@ -4,7 +4,7 @@ CFLAGS = -g -Wall -Wextra -Werror -std=c++98
 
 # Normal
 NAME =  I_dont_know_what_im_doing_!
-FUNC = main.cpp
+FUNC = main.cpp Graph.cpp Vector2.cpp
 OBJS = $(FUNC:.cpp=.o)
 
 
