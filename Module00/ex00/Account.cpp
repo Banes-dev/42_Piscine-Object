@@ -2,11 +2,7 @@
 
 
 // Constructor & Destructor
-Account::Account(int aId) : mId(aId), mBalance(0)
-{
-}
-
-Account::Account(int aId, double aBalance) : mId(aId), mBalance(aBalance)
+Account::Account(unsigned int aId, double aBalance) : mId(aId), mBalance(aBalance)
 {
 }
 
@@ -15,7 +11,7 @@ Account::~Account()
 }
 
 // Others functions
-int Account::GetId() const
+unsigned int Account::GetId() const
 {
 	return mId;
 }

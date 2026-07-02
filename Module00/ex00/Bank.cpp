@@ -1,14 +1,14 @@
 #include "Bank.hpp"
 
 
-int Bank::mNextId = 0;
+unsigned int Bank::mNextId = 1;
 
 // Constructor & Destructor
 Bank::Bank() : mLiquidity(0)
 {
 }
 
-Bank::Bank(int aLiquidity) : mLiquidity(aLiquidity)
+Bank::Bank(double aLiquidity) : mLiquidity(aLiquidity)
 {
 }
 
@@ -21,62 +21,91 @@ Bank &Bank::operator=(const Bank &copy)
 {
 	if (this != &copy)
 	{
-		for (std::map<int, Account*>::const_iterator it = mClientAccounts.begin(); it != mClientAccounts.end(); ++it)
+		for (std::map<unsigned int, Account*>::const_iterator it = mClientAccounts.begin(); it != mClientAccounts.end(); ++it)
 			delete it->second;
 		this->mClientAccounts.clear();
 
 		this->mLiquidity = copy.mLiquidity;
-		for (std::map<int, Account*>::const_iterator it = copy.mClientAccounts.begin(); it != copy.mClientAccounts.end(); ++it)
-			this->mClientAccounts.insert(std::pair<int, Account*>(it->first, new Account(*(it->second))));
+		for (std::map<unsigned int, Account*>::const_iterator it = copy.mClientAccounts.begin(); it != copy.mClientAccounts.end(); ++it)
+			this->mClientAccounts.insert(std::pair<unsigned int, Account*>(it->first, new Account(*(it->second))));
 	}
 	return (*this);
 }
 
 Bank::~Bank()
 {
-	for (std::map<int, Account*>::const_iterator it = mClientAccounts.begin(); it != mClientAccounts.end(); ++it)
+	for (std::map<unsigned int, Account*>::const_iterator it = mClientAccounts.begin(); it != mClientAccounts.end(); ++it)
 		delete it->second;
 	this->mClientAccounts.clear();
 }
 
 // Others functions
-void Bank::SetLiquidity(int aLiquidity)
+void Bank::SetLiquidity(double aLiquidity)
 {
 	this->mLiquidity = aLiquidity;
 }
-int Bank::GetLiquidity() const
+double Bank::GetLiquidity() const
 {
 	return this->mLiquidity;
 }
 
-int Bank::CreateAccount() const
+unsigned int Bank::CreateAccount(double aMoney)
 {
+	if (aMoney <= 0)
+		throw Bank::NumberMustBePositive();
 	// Create account
+	// Account vAccount = new Account(mNextId, aMoney);
 	// Add account into std::map mClientAccounts
-	// return id_account;
-	return 0;
+	mClientAccounts.insert(std::pair<unsigned int, Account*>(mNextId, new Account(mNextId, aMoney)));
+	return mNextId++;
 }
-void Bank::DeleteAccount(int aId)
+void Bank::DeleteAccount(unsigned int aId)
 {
-	(void)aId;
+	std::map<unsigned int, Account *>::iterator it;
+	if ((it = mClientAccounts.find(aId)) == mClientAccounts.end())
+		throw Bank::AccountIdNotExist();
 	// Delete account
-	// Delete account in std::map mClientAccounts
+	delete it->second;
+	mClientAccounts.erase(it);
 }
 
-void Bank::DepositMoney(int aId, int aMoney)
+void Bank::DepositMoney(unsigned int aId, double aMoney)
 {
-	mClientAccounts[aId]->mBalance += aMoney;
+	if (aMoney <= 0)
+		throw Bank::NumberMustBePositive();
+	std::map<unsigned int, Account *>::iterator it;
+	if ((it = mClientAccounts.find(aId)) == mClientAccounts.end())
+		throw Bank::AccountIdNotExist();
+	mLiquidity += aMoney * 0.05;
+	mClientAccounts[aId]->mBalance += aMoney * 0.95;
 }
-void Bank::WithdrawMoney(int aId, int aMoney)
+void Bank::WithdrawMoney(unsigned int aId, double aMoney)
 {
+	if (aMoney <= 0)
+		throw Bank::NumberMustBePositive();
+	std::map<unsigned int, Account *>::iterator it;
+	if ((it = mClientAccounts.find(aId)) == mClientAccounts.end())
+		throw Bank::AccountIdNotExist();
 	mClientAccounts[aId]->mBalance -= aMoney;
 }
-void Bank::GiveLoan(int aId, int aMoney)
+void Bank::GiveLoan(unsigned int aId, double aMoney)
 {
+	if (aMoney <= 0)
+		throw Bank::NumberMustBePositive();
+	std::map<unsigned int, Account *>::iterator it;
+	if ((it = mClientAccounts.find(aId)) == mClientAccounts.end())
+		throw Bank::AccountIdNotExist();
+	mClientAccounts[aId]->mBalance += aMoney;
 	mClientAccounts[aId]->mLoan += aMoney;
 }
-void Bank::RetireLoan(int aId, int aMoney)
+void Bank::RetireLoan(unsigned int aId, double aMoney)
 {
+	if (aMoney <= 0)
+		throw Bank::NumberMustBePositive();
+	std::map<unsigned int, Account *>::iterator it;
+	if ((it = mClientAccounts.find(aId)) == mClientAccounts.end())
+		throw Bank::AccountIdNotExist();
+	mClientAccounts[aId]->mBalance -= aMoney;
 	mClientAccounts[aId]->mLoan -= aMoney;
 }
 
@@ -84,21 +113,25 @@ const char *Bank::AccountIdNotExist::what() const throw()
 {
 	return ("\033[0;31mThis account id doesn't exist\033[0m");
 }
+const char *Bank::NumberMustBePositive::what() const throw()
+{
+	return ("\033[0;31mNumber must be positive\033[0m");
+}
 
-// const Account &Bank::operator[](int aId)
-// {
-// 	std::map<int, Account *>::iterator	it;
+const Account &Bank::operator[](unsigned int aId)
+{
+	std::map<unsigned int, Account *>::iterator	it;
 
-// 	if ((it = mClientAccounts.find(aId)) == mClientAccounts.end())
-// 		throw Bank::AccountIdNotExist();
-// 	return *(it->second);
-// }
+	if ((it = mClientAccounts.find(aId)) == mClientAccounts.end())
+		throw Bank::AccountIdNotExist();
+	return *(it->second);
+}
 
 std::ostream &operator <<(std::ostream &aOut, const Bank &aBank)
 {
 	aOut << "Bank informations : " << std::endl;
 	aOut << "Liquidity : " << aBank.GetLiquidity() << std::endl;
-	for (std::map<int, Account *>::const_iterator it = aBank.mClientAccounts.begin(); it != aBank.mClientAccounts.end(); ++it)
+	for (std::map<unsigned int, Account *>::const_iterator it = aBank.mClientAccounts.begin(); it != aBank.mClientAccounts.end(); ++it)
 		aOut << *(it->second) << std::endl;
 	return (aOut);
 }

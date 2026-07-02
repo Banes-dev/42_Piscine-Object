@@ -8,20 +8,19 @@ class Bank;
 class Account
 {
 	private :
-		int mId;
+		unsigned int mId;
 		double mBalance;
 		double mLoan;
 		
 		// Constructor & Destructor
-		Account(int aId);
-		Account(int aId, double aBalance);
+		Account(unsigned int aId, double aBalance);
 		~Account();
 
 		friend class Bank;
 
 	public :
 		// Others functions
-		int GetId() const;
+		unsigned int GetId() const;
 		double GetBalance() const;
 		double GetLoan() const;
 

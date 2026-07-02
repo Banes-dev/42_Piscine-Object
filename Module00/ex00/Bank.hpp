@@ -9,35 +9,39 @@ class Bank
 {
 	private :
 		double mLiquidity;
-		std::map<int, Account *> mClientAccounts;
-		static int mNextId;
+		std::map<unsigned int, Account *> mClientAccounts;
+		static unsigned int mNextId;
 
 	public :
 		// Constructor & Destructor
 		Bank();
-		Bank(int aLiquidity);
+		Bank(double aLiquidity);
 		Bank(const Bank &copy);
 		Bank &operator=(const Bank &copy);
 		~Bank();
 
 		// Others functions
-		void SetLiquidity(int aLiquidity);
-		int GetLiquidity() const;
+		void SetLiquidity(double aLiquidity);
+		double GetLiquidity() const;
 
-		int CreateAccount() const;
-		void DeleteAccount(int aId);
+		unsigned int CreateAccount(double aMoney);
+		void DeleteAccount(unsigned int aId);
 
-		void DepositMoney(int aId, int aMoney);
-		void WithdrawMoney(int aId, int aMoney);
-		void GiveLoan(int aId, int aMoney);
-		void RetireLoan(int aId, int aMoney);
+		void DepositMoney(unsigned int aId, double aMoney);
+		void WithdrawMoney(unsigned int aId, double aMoney);
+		void GiveLoan(unsigned int aId, double aMoney);
+		void RetireLoan(unsigned int aId, double aMoney);
 
 		class AccountIdNotExist : public std::exception {
 			public :
 				virtual const char *what() const throw();
 		};
+		class NumberMustBePositive : public std::exception {
+			public :
+				virtual const char *what() const throw();
+		};
 
-		// const Account &operator[](int);
+		const Account &operator[](unsigned int);
 
 		friend std::ostream &operator <<(std::ostream &aOut, const Bank &aBank);
 };

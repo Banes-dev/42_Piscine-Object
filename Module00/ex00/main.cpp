@@ -4,74 +4,62 @@
 // My main
 int main()
 {
-	// Account accountA = Account();
-	// accountA.id = 0;
-	// accountA.value = 100;
+	try
+	{
+		Bank vBank1 = Bank();
+		vBank1.SetLiquidity(420);
 
-	// Account accountB = Account();
-	// accountB.id = 1;
-	// accountB.value = 100;
+		Bank vBank2 = Bank(1000);
 
-	// Bank bank = Bank();
-	// bank.liquidity = 999;
-	// bank.clientAccounts.push_back(&accountA);
-	// bank.clientAccounts.push_back(&accountB);
+		Bank vBank3 = Bank(vBank1);
+		Bank vBank4 = vBank2;
 
-	// bank.liquidity -= 200;
-	// accountA.value += 400;
+		std::cout << "Bank1 liquidity : " << vBank1.GetLiquidity() << std::endl;
+		std::cout << "Bank2 liquidity : " << vBank2.GetLiquidity() << std::endl;
+		std::cout << "Bank1 copy construct liquidity : " << vBank3.GetLiquidity() << std::endl;
+		std::cout << "Bank2 copy = liquidity : " << vBank4.GetLiquidity() << std::endl << std::endl;
 
-	// std::cout << "Account : " << std::endl;
-	// std::cout << accountA << std::endl;
-	// std::cout << accountB << std::endl;
+		try
+		{
+			unsigned int vTestAccount = vBank1.CreateAccount(42);
+			std::cout << "vTestAccount : " << vBank1[vTestAccount] << std::endl;
+			vBank1.DeleteAccount(vTestAccount);
+			std::cout << "vTestAccount : " << vBank1[vTestAccount] << std::endl;
+		}
+		catch (std::exception &e) {
+			std::cerr << e.what() << std::endl;
+		}
 
-	// std::cout << " ----- " << std::endl;
+		unsigned int vAccount1 = vBank1.CreateAccount(42);
+		std::cout << std::endl << "vAccount1 : " << vBank1[vAccount1] << std::endl;
+		vBank1.DepositMoney(vAccount1, 100);
+		std::cout << "vAccount1 : " << vBank1[vAccount1] << std::endl;
+		vBank1.WithdrawMoney(vAccount1, 40);
+		std::cout << "vAccount1 : " << vBank1[vAccount1] << std::endl;
+		vBank1.GiveLoan(vAccount1, 86);
+		std::cout << "vAccount1 : " << vBank1[vAccount1] << std::endl;
+		vBank1.RetireLoan(vAccount1, 44);
+		std::cout << "vAccount1 : " << vBank1[vAccount1] << std::endl << std::endl;
 
-	// std::cout << "Bank : " << std::endl;
-	// std::cout << bank << std::endl;
+		unsigned int vAccount2 = vBank1.CreateAccount(666);
+		std::cout << vBank1 << std::endl << std::endl;
 
-	Bank vBank1 = Bank();
-	vBank1.SetLiquidity(420);
-
-	Bank vBank2 = Bank(1000);
-
-	Bank vBank3 = Bank(vBank1);
-	Bank vBank4 = vBank2;
-
-	std::cout << "Bank1 liquidity : " << vBank1.GetLiquidity() << std::endl;
-	std::cout << "Bank2 liquidity : " << vBank2.GetLiquidity() << std::endl;
-	std::cout << "Bank1 copy construct liquidity : " << vBank3.GetLiquidity() << std::endl;
-	std::cout << "Bank2 copy = liquidity : " << vBank4.GetLiquidity() << std::endl;
+		try {
+			std::cout << "Error not good id : " << vBank1[42] << std::endl;
+		}
+		catch (std::exception &e) {
+			std::cerr << e.what() << std::endl;
+		}
+		try {
+			vBank1.DepositMoney(vAccount2, 0);
+		}
+		catch (std::exception &e) {
+			std::cerr << e.what() << std::endl;
+		}
+	}
+	catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
+	}
 
 	return 0;
 }
-
-// // Exemple main
-// int main(int argc, char **argv)
-// {
-// 	Account accountA = Account();
-// 	accountA.id = 0;
-// 	accountA.value = 100;
-
-// 	Account accountB = Account();
-// 	accountB.id = 1;
-// 	accountB.value = 100;
-
-// 	Bank bank = Bank();
-// 	bank.liquidity = 999;
-// 	bank.clientAccounts.push_back(&accountA);
-// 	bank.clientAccounts.push_back(&accountB);
-
-// 	bank.liquidity -= 200;
-// 	accountA.value += 400;
-
-// 	std::cout << "Account : " << std::endl;
-// 	std::cout << accountA << std::endl;
-// 	std::cout << accountB << std::endl;
-
-// 	std::cout << " ----- " << std::endl;
-
-// 	std::cout << "Bank : " << std::endl;
-// 	std::cout << bank << std::endl;
-
-// 	return 0;
-// }
