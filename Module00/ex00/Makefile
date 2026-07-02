@@ -4,7 +4,7 @@ CFLAGS = -g -Wall -Wextra -Werror -std=c++98
 
 # Normal
 NAME = Divide_and_conquer
-FUNC = main.cpp
+FUNC = main.cpp Bank.cpp Account.cpp
 OBJS = $(FUNC:.cpp=.o)
 
 

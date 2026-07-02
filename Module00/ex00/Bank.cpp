@@ -40,42 +40,44 @@ Bank::~Bank()
 }
 
 // Others functions
-void SetLiquidity(int aLiquidy)
+void Bank::SetLiquidity(int aLiquidity)
 {
 	this->mLiquidity = aLiquidity;
 }
-int GetLiquidity() const
+int Bank::GetLiquidity() const
 {
 	return this->mLiquidity;
 }
 
-Account Bank::CreateAccount()
+int Bank::CreateAccount() const
 {
 	// Create account
 	// Add account into std::map mClientAccounts
-	// return account;
+	// return id_account;
+	return 0;
 }
-void Bank::DeleteAccount(Account *aAccount)
+void Bank::DeleteAccount(int aId)
 {
+	(void)aId;
 	// Delete account
 	// Delete account in std::map mClientAccounts
 }
 
-void Bank::DepositMoney(Account *aAccount, int aMoney)
+void Bank::DepositMoney(int aId, int aMoney)
 {
-	aAccount.mBalance += aMoney;
+	mClientAccounts[aId]->mBalance += aMoney;
 }
-void Bank::WithdrawMoney(Account *aAccount, int aMoney)
+void Bank::WithdrawMoney(int aId, int aMoney)
 {
-	aAccount.mBalance -= aMoney;
+	mClientAccounts[aId]->mBalance -= aMoney;
 }
-void Bank::GiveLoan(Account *aAccount, int aMoney)
+void Bank::GiveLoan(int aId, int aMoney)
 {
-	aAccount.mLoan += aMoney;
+	mClientAccounts[aId]->mLoan += aMoney;
 }
-void Bank::RetireLoan(Account *aAccount, int aMoney)
+void Bank::RetireLoan(int aId, int aMoney)
 {
-	aAccount.mLoan -= aMoney;
+	mClientAccounts[aId]->mLoan -= aMoney;
 }
 
 const char *Bank::AccountIdNotExist::what() const throw()
@@ -83,20 +85,20 @@ const char *Bank::AccountIdNotExist::what() const throw()
 	return ("\033[0;31mThis account id doesn't exist\033[0m");
 }
 
-const Account &Bank::operator[](int aId)
-{
-	std::map<int, Account *>::iterator	it;
+// const Account &Bank::operator[](int aId)
+// {
+// 	std::map<int, Account *>::iterator	it;
 
-	if ((it = mClientAccounts.find(aId)) == mClientAccounts.end())
-		throw Bank::AccountIdNotExist();
-	return *(it->second);
-}
+// 	if ((it = mClientAccounts.find(aId)) == mClientAccounts.end())
+// 		throw Bank::AccountIdNotExist();
+// 	return *(it->second);
+// }
 
 std::ostream &operator <<(std::ostream &aOut, const Bank &aBank)
 {
 	aOut << "Bank informations : " << std::endl;
-	aOut << "Liquidity : " << aBank.mLiquidity << std::endl;
-	for (auto &clientAccount : aBank.mClientAccounts)
-    aOut << *clientAccount << std::endl;
+	aOut << "Liquidity : " << aBank.GetLiquidity() << std::endl;
+	for (std::map<int, Account *>::const_iterator it = aBank.mClientAccounts.begin(); it != aBank.mClientAccounts.end(); ++it)
+		aOut << *(it->second) << std::endl;
 	return (aOut);
 }

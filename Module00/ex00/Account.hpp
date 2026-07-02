@@ -3,8 +3,6 @@
 #include <iostream>
 #include <string>
 
-#include "Bank.hpp"
-
 class Bank;
 
 class Account
@@ -15,7 +13,7 @@ class Account
 		double mLoan;
 		
 		// Constructor & Destructor
-		Account();
+		Account(int aId);
 		Account(int aId, double aBalance);
 		~Account();
 
@@ -27,4 +25,5 @@ class Account
 		double GetBalance() const;
 		double GetLoan() const;
 
-}
+		friend std::ostream &operator << (std::ostream &aOut, const Account &aAccount);
+};

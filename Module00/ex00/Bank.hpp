@@ -21,23 +21,23 @@ class Bank
 		~Bank();
 
 		// Others functions
-		void SetLiquidity(int aLiquidy);
-		int GetLiquidity();
+		void SetLiquidity(int aLiquidity);
+		int GetLiquidity() const;
 
-		Account CreateAccount();
-		void DeleteAccount(Account *aAccount);
+		int CreateAccount() const;
+		void DeleteAccount(int aId);
 
-		void DepositMoney(Account *aAccount, int aMoney);
-		void WithdrawMoney(Account *aAccount, int aMoney);
-		void GiveLoan(Account *aAccount, int aMoney);
-		void RetireLoan(Account *aAccount, int aMoney);
+		void DepositMoney(int aId, int aMoney);
+		void WithdrawMoney(int aId, int aMoney);
+		void GiveLoan(int aId, int aMoney);
+		void RetireLoan(int aId, int aMoney);
 
 		class AccountIdNotExist : public std::exception {
 			public :
 				virtual const char *what() const throw();
 		};
 
-		const Account &operator[](int);
-}
+		// const Account &operator[](int);
 
-std::ostream &operator <<(std::ostream &aOut, const Bank &aBank)
+		friend std::ostream &operator <<(std::ostream &aOut, const Bank &aBank);
+};
