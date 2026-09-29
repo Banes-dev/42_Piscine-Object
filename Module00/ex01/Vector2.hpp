@@ -1,25 +1,28 @@
 #pragma once
 
 #include <iostream>
-#include <string>
-
-class Bank;
+#include <cmath>
 
 class Vector2
 {
 	private :
-		unsigned int mX;
-		unsigned int mY;
+		float mX;
+		float mY;
 
 	public :
 		// Constructor & Destructor
-		Vector2(unsigned int aId, double aBalance);
+		Vector2(float aX, float aY);
 		~Vector2();
 
 		// Others functions
-		// unsigned int GetId() const;
-		// double GetBalance() const;
-		// double GetLoan() const;
+		float GetX() const;
+		float GetY() const;
 
-		friend std::ostream &operator << (std::ostream &aOut, const Vector2 &aVector2);
+		void SetX(float aX);
+		void SetY(float aY);
+
+		class NumberMustBePositive : public std::exception {
+			public :
+				virtual const char *what() const throw();
+		};
 };

@@ -2,7 +2,7 @@
 
 
 // Constructor & Destructor
-Vector2::Vector2(unsigned int aId, double aBalance) : mId(aId), mBalance(aBalance)
+Vector2::Vector2(float aX, float aY) : mX(aX), mY(aY)
 {
 }
 
@@ -11,23 +11,32 @@ Vector2::~Vector2()
 }
 
 // Others functions
-unsigned int Vector2::GetId() const
+float Vector2::GetX() const
 {
-	return mId;
+	return this->mX;
 }
 
-double Vector2::GetBalance() const
+float Vector2::GetY() const
 {
-	return mBalance;
+	return this->mY;
 }
 
-double Vector2::GetLoan() const
+void Vector2::SetX(float aX)
 {
-	return mLoan;
+	if (std::isnan(aX) || aX < 0)
+		throw Vector2::NumberMustBePositive();
+	this->mX = aX;
 }
 
-std::ostream &operator<<(std::ostream& aOut, const Vector2 &aVector2)
+void Vector2::SetY(float aY)
 {
-    aOut << "[" << aVector2.mId << "] - [" << aVector2.mBalance << "] - [" << aVector2.mLoan << "]";
-    return (aOut);
+	if (std::isnan(aY) || aY < 0)
+		throw Vector2::NumberMustBePositive();
+	this->mY = aY;
+}
+
+
+const char *Vector2::NumberMustBePositive::what() const throw()
+{
+	return ("\033[0;31mNumber must be positive\033[0m");
 }

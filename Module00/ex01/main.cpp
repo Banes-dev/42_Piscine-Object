@@ -1,59 +1,33 @@
-// #include "Bank.hpp"
+#include "Graph.hpp"
+#include "Vector2.hpp"
 
-int main()
+int main(int argc, char *argv[])
 {
 	try
 	{
-		Bank vBank1 = Bank();
-		vBank1.SetLiquidity(420);
+		// Create a graph
+		Vector2 size(24, 42); // x = max 68 on big screen and 24 on small screen
+		Graph graph(size);
 
-		Bank vBank2 = Bank(1000);
-
-		Bank vBank3 = Bank(vBank1);
-		Bank vBank4 = vBank2;
-
-		std::cout << "Bank1 liquidity : " << vBank1.GetLiquidity() << std::endl;
-		std::cout << "Bank2 liquidity : " << vBank2.GetLiquidity() << std::endl;
-		std::cout << "Bank1 copy construct liquidity : " << vBank3.GetLiquidity() << std::endl;
-		std::cout << "Bank2 copy = liquidity : " << vBank4.GetLiquidity() << std::endl << std::endl;
-
-		try
+		if (argc == 2)
 		{
-			unsigned int vTestAccount = vBank1.CreateAccount(42);
-			std::cout << "vTestAccount : " << vBank1[vTestAccount] << std::endl;
-			vBank1.DeleteAccount(vTestAccount);
-			std::cout << "vTestAccount : " << vBank1[vTestAccount] << std::endl;
+			// Read points from file
+			graph.ReadPointsFromFile(argv[1]);
 		}
-		catch (std::exception &e) {
-			std::cerr << e.what() << std::endl;
+		else
+		{
+			// Create points in graph
+			graph.CreatePoint(0, 0);
+			graph.CreatePoint(2, 2);
+			graph.CreatePoint(5, 8);
+			graph.CreatePoint(4, 2);
+			graph.CreatePoint(10, 10);
 		}
 
-		unsigned int vAccount1 = vBank1.CreateAccount(42);
-		std::cout << std::endl << "vAccount1 : " << vBank1[vAccount1] << std::endl;
-		vBank1.DepositMoney(vAccount1, 100);
-		std::cout << "vAccount1 : " << vBank1[vAccount1] << std::endl;
-		vBank1.WithdrawMoney(vAccount1, 40);
-		std::cout << "vAccount1 : " << vBank1[vAccount1] << std::endl;
-		vBank1.GiveLoan(vAccount1, 86);
-		std::cout << "vAccount1 : " << vBank1[vAccount1] << std::endl;
-		vBank1.RetireLoan(vAccount1, 44);
-		std::cout << "vAccount1 : " << vBank1[vAccount1] << std::endl << std::endl;
-
-		unsigned int vAccount2 = vBank1.CreateAccount(666);
-		std::cout << vBank1 << std::endl << std::endl;
-
-		try {
-			std::cout << "Error not good id : " << vBank1[42] << std::endl;
-		}
-		catch (std::exception &e) {
-			std::cerr << e.what() << std::endl;
-		}
-		try {
-			vBank1.DepositMoney(vAccount2, 0);
-		}
-		catch (std::exception &e) {
-			std::cerr << e.what() << std::endl;
-		}
+		// Print ascii result
+		graph.ResultAscii();
+		// Create img in png format
+		graph.ResultPng("graph.png");
 	}
 	catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;
