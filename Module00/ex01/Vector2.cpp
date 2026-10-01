@@ -24,19 +24,13 @@ float Vector2::GetY() const
 void Vector2::SetX(float aX)
 {
 	if (std::isnan(aX) || aX < 0)
-		throw Vector2::NumberMustBePositive();
+		throw NumberMustBePositive();
 	this->mX = aX;
 }
 
 void Vector2::SetY(float aY)
 {
 	if (std::isnan(aY) || aY < 0)
-		throw Vector2::NumberMustBePositive();
+		throw NumberMustBePositive();
 	this->mY = aY;
-}
-
-
-const char *Vector2::NumberMustBePositive::what() const throw()
-{
-	return ("\033[0;31mNumber must be positive\033[0m");
 }

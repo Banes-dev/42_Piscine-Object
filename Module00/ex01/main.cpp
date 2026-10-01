@@ -26,8 +26,19 @@ int main(int argc, char *argv[])
 
 		// Print ascii result
 		graph.ResultAscii();
+
+		// Create line in graph
+		Vector2 size_lines(10, 10); // x = max 68 on big screen and 24 on small screen
+		Graph graph_lines(size_lines);
+		graph_lines.CreateLine(0, 0, 4, 2);
+		graph_lines.CreateLine(6, 6, 10, 10);
+		graph_lines.ResultAscii();
+
 		// Create img in png format
-		graph.ResultPng("graph.png");
+		unsigned int bg[4] = {20, 20, 20, 255};
+		unsigned int pt[4] = {255, 255, 255, 255};
+		graph.ResultPng("graph.png", bg, pt);
+		graph_lines.ResultPng("graph_lines.png", bg, pt);
 	}
 	catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;

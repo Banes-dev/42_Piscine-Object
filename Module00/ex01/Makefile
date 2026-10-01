@@ -4,7 +4,7 @@ CFLAGS = -g -Wall -Wextra -Werror -std=c++98
 
 # Normal
 NAME =  I_dont_know_what_im_doing_!
-FUNC = main.cpp Graph.cpp Vector2.cpp
+FUNC = main.cpp Graph.cpp Vector2.cpp LodePNG/lodepng.cpp
 OBJS = $(FUNC:.cpp=.o)
 
 
@@ -22,6 +22,7 @@ clean:
 
 fclean:	clean
 	rm -f ${NAME}
+	rm -f graph.png graph_lines.png
 
 re:	fclean all
 
