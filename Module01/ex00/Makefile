@@ -4,7 +4,7 @@ CFLAGS = -g -Wall -Wextra -Werror -std=c++98
 
 # Normal
 NAME =  Putting_it_into_practice
-FUNC = main.cpp Position.cpp Statistic.cpp Worker.cpp
+FUNC = main.cpp Position.cpp Statistic.cpp Worker.cpp Toll.cpp Shovel.cpp Hammer.cpp WorkShop.cpp
 OBJS = $(FUNC:.cpp=.o)
 
 

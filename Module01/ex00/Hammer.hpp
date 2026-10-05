@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Color.hpp"
 #include "Tool.hpp"
 
 class Hammer : public Tool
@@ -7,8 +8,8 @@ class Hammer : public Tool
 	public :
 		// Constructor & Destructor
 		Hammer();
-		~Hammer();
+		virtual ~Hammer();
 
 		// Others functions
-		void use(float aX, float aY) const;
-}
+		virtual void use();
+};
