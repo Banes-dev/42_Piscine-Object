@@ -6,7 +6,8 @@
 
 #include "Color.hpp"
 #include "Tool.hpp"
-#include "Workshop.hpp"
+
+class Workshop;
 
 struct Position {
 	int x;
@@ -47,7 +48,7 @@ class Worker
 		void AddTool(Tool *aTool);
 		void RemoveTool(Tool *aTool);
 		void Work();
-		bool HasToolType(ToolType type) const;
+		bool HasToolType(ToolType aType) const;
 		void AddWorkshop(Workshop *aWorkshop);
 		void RemoveWorkshop(Workshop *aWorkshop);
 
@@ -55,5 +56,9 @@ class Worker
 		class ToolNotExistException : public std::exception {
 			public:
 				virtual const char *what() const throw() {return ("\033[0;31mTool not exist\033[0m");}
+		};
+		class WorkshopNotExistException : public std::exception {
+			public:
+				virtual const char *what() const throw() {return ("\033[0;31mWorkshop not exist\033[0m");}
 		};
 };

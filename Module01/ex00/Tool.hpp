@@ -28,7 +28,7 @@ class Tool
 		virtual ~Tool();
 
 		// Others functions
-		virtual void use() const = 0;
+		virtual void use() = 0;
 		Worker *GetWorker();
 		void SetWorker(Worker *aWorker);
 		ToolType getType() const;

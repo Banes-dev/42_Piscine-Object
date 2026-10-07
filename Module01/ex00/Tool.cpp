@@ -1,7 +1,7 @@
 #include "Tool.hpp"
 
 // Constructor & Destructor
-Tool::Tool(ToolType aType) : mNbUse(0), mWorker(NULL), mtype(aType)
+Tool::Tool(ToolType aType) : mWorker(NULL), mtype(aType), mNbUse(0)
 {
 	std::cout << Green << "[Tool] " << Reset_Color << "Create a tool of type " << Yellow << aType << Reset_Color << std::endl;
 }

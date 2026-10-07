@@ -1,10 +1,12 @@
 #include "Worker.hpp"
-#include "Color.hpp"
+#include "Workshop.hpp"
 
 // Constructor & Destructor
 Worker::Worker(Position aPos, Statistic aStat) : mPos(aPos), mStat(aStat)
 {
 	std::cout << Green << "[Worker] " << Reset_Color << "Create a worker" << std::endl;
+	(void)mPos;
+	(void)mStat;
 }
 
 Worker::~Worker()
@@ -51,6 +53,48 @@ void Worker::RemoveTool(Tool *aTool)
 		this->mTools.erase(it);
 		aTool->SetWorker(NULL);
 		std::cout << Cyan << "[Worker] " << Reset_Color << "Remove a tool of type " << Yellow << aTool->getType() << Reset_Color << std::endl;
-		
+		// Unregister user of workshops if he has not the tool required
+		for (int i = static_cast<int>(this->mWorkshops.size()) - 1; i >= 0; --i)
+		{
+			Workshop *workshop = this->mWorkshops[i];
+			if (this->HasToolType(workshop->GetToolRequired()) == false)
+				workshop->RemoveWorker(this);
+		}
 	}
+}
+
+void Worker::Work()
+{
+	std::cout << Cyan << "[Worker] " << Reset_Color << "Work" << std::endl;
+}
+
+bool Worker::HasToolType(ToolType aType) const
+{
+	std::vector<Tool *>::const_iterator it = this->mTools.begin();
+	while (it != this->mTools.end())
+	{
+		Tool *tool = *it;
+		if (tool->getType() == aType)
+			return true;
+		++it;
+	}
+	return false;
+}
+
+void Worker::AddWorkshop(Workshop *aWorkshop)
+{
+	if (aWorkshop == NULL)
+		throw WorkshopNotExistException();
+	if (std::find(mWorkshops.begin(), mWorkshops.end(), aWorkshop) == mWorkshops.end())
+		this->mWorkshops.push_back(aWorkshop);
+}
+
+void Worker::RemoveWorkshop(Workshop *aWorkshop)
+{
+	if (aWorkshop == NULL)
+		throw WorkshopNotExistException();
+
+	std::vector<Workshop *>::iterator it = std::find(this->mWorkshops.begin(), this->mWorkshops.end(), aWorkshop);
+	if (it != this->mWorkshops.end())
+		this->mWorkshops.erase(it);
 }

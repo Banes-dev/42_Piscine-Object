@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 
+#include "Color.hpp"
 #include "Worker.hpp"
 #include "Tool.hpp"
 
@@ -20,13 +21,16 @@ class Workshop
 		// Others functions
 		void AddWorker(Worker *aWorker);
 		void RemoveWorker(Worker *aWorker);
-
-		void Work();
 		void ExecuteWorkDay();
+		ToolType GetToolRequired() const;
 
 		// Exceptions
-		class NumberMustBePositive : public std::exception {
+		class WorkerNotExistException : public std::exception {
 			public:
-				virtual const char *what() const throw() {return ("\033[0;31mNumber must be positive\033[0m");}
+				virtual const char *what() const throw() {return ("\033[0;31mWorker not exist\033[0m");}
+		};
+		class WorkerHasNoToolException : public std::exception {
+			public:
+				virtual const char *what() const throw() {return ("\033[0;31mWorker has no tool\033[0m");}
 		};
 };
