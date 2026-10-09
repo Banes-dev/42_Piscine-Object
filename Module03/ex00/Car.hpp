@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Engine.hpp"
 #include "Gearbox.hpp"
 #include "Steering.hpp"
