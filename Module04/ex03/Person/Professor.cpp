@@ -23,33 +23,33 @@ void Professor::CloseCourse()
 
 void Professor::AskForNewCourse(std::string aCourseName)
 {
-    if (mCurrentHeadmaster == nullptr)
+    if (mHeadmaster == nullptr)
 	{
 		throw HeadmasterNotAssignedException();
 		return;
 	}
-    mCurrentHeadmaster->RequestCourseCreation(aCourseName);
+    mHeadmaster->RequestCourseCreation(this, aCourseName);
 
 }
 
 void Professor::AskForNewRoom()
 {
-    if (mCurrentHeadmaster == nullptr)
+    if (mHeadmaster == nullptr)
 	{
 		throw HeadmasterNotAssignedException();
 		return;
 	}
-	// todo
+	mHeadmaster->RequestRoomCreation();
 }
 
 void Professor::ProposeGraduation(Student *aStudent)
 {
-    if (mCurrentHeadmaster == nullptr)
+    if (mHeadmaster == nullptr)
 	{
 		throw HeadmasterNotAssignedException();
 		return;
 	}
 	Course *vCourse = mCurrentCourse;
 	if (vCourse)
-		mCurrentHeadmaster->RequestGraduation(aStudent, vCourse);
+		mHeadmaster->RequestGraduation(aStudent, vCourse);
 }

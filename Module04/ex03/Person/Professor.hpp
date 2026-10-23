@@ -13,10 +13,10 @@ class Professor : public Staff
 {
 	private :
 		std::shared_ptr<Course> *mCurrentCourse;
-		std::shared_ptr<Headmaster> *mCurrentHeadmaster;
+		std::shared_ptr<Headmaster> *mHeadmaster;
 
 	public :
-		Professor(std::string aName) : Staff(aName), mCurrentCourse(nullptr), mCurrentHeadmaster(nullptr) {
+		Professor(std::string aName) : Staff(aName), mCurrentCourse(nullptr), mHeadmaster(nullptr) {
 		}
 		~Professor() override = default;
 
