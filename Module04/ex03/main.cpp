@@ -1,66 +1,62 @@
 #include <iostream>
 #include <memory>
-
 #include "Color.hpp"
 #include "Singletons.hpp"
 #include "Person/Secretary.hpp"
 #include "Person/Headmaster.hpp"
 #include "Person/Student.hpp"
+#include "Person/Professor.hpp"
 #include "Course.hpp"
-#include "Form/SubscriptionToCourseForm.hpp"
-#include "Form/NeedCourseCreationForm.hpp"
 
 int main()
 {
-    std::cout << Cyan << "--- Exercise 02: Factory and Command ---" << Reset_Color << std::endl;
+    std::cout << Cyan << "--- Exercice 03 : Mediator ---" << Reset_Color << std::endl;
 
-    // Init actors
+    // 1. Instanciation des acteurs
     auto secretary = std::make_shared<Secretary>("Peggy");
     auto headmaster = std::make_shared<Headmaster>("Albus Dumbledore");
-    auto student = std::make_shared<Student>("Harry");
-    auto potionsCourse = std::make_shared<Course>("Potions 101");
-
-    CourseList::GetInstance().Add(potionsCourse);
-
-    std::cout << "\n" << Yellow << Arrow_right << " Step 1: Secretary creates a subscription form" << Reset_Color << std::endl;
     
-    std::shared_ptr<Form> rawForm = secretary->CreateForm(FormType::SubscriptionToCourse);
-    auto subForm = std::dynamic_pointer_cast<SubscriptionToCourseForm>(rawForm);
-    
-    if (subForm)
+    // On relie la Secrétaire au Headmaster (Médiateur)
+    headmaster->AsssignSecretary(secretary);
+
+    auto profSnape = std::make_shared<Professor>("Severus Snape");
+    auto studentHarry = std::make_shared<Student>("Harry Potter");
+
+    // On relie le Professeur et l'Étudiant au Headmaster (Médiateur)
+	profSnape->AssignHeadmaster(headmaster.get());
+	studentHarry->AssignHeadmaster(headmaster.get());
+
+    // Ajout dans les Singletons pour le suivi
+    StaffList::GetInstance().Add(headmaster);
+    StaffList::GetInstance().Add(secretary);
+    StaffList::GetInstance().Add(profSnape);
+    StudentList::GetInstance().Add(studentHarry);
+
+    std::cout << "\n" << Yellow << "--- Scenario 1 : Le professeur demande un nouveau cours ---" << Reset_Color << std::endl;
+    // Le professeur interagit UNIQUEMENT avec le Headmaster, sans connaître la Secretary ni les Forms[cite: 13]
+    profSnape->AskForNewCourse("Potions 101");
+
+    // Récupération du cours créé magiquement dans le Singleton (pour la suite de la simulation)
+    std::shared_ptr<Course> potionsCourse = nullptr;
+    if (!CourseList::GetInstance().Get().empty())
 	{
-        std::cout << "Filling form with student and course..." << std::endl;
-        subForm->Fill(student, potionsCourse);
+        potionsCourse = CourseList::GetInstance().Get().back();
+        profSnape->AssignCourse(potionsCourse.get());
     }
 
-    std::cout << "\n" << Red << Arrow_right << " Step 2: Attempt execution WITHOUT signature" << Reset_Color << std::endl;
-    
-    // Should fail
-    subForm->Execute();
+    std::cout << "\n" << Yellow << "--- Scenario 2 : Le professeur n'a pas de salle ---" << Reset_Color << std::endl;
+    // Le professeur demande au Headmaster de créer une salle[cite: 15]
+    profSnape->AskForNewRoom();
 
-    std::cout << "\n" << Green << Arrow_right << " Step 3: Headmaster signs and executes the form" << Reset_Color << std::endl;
-    
-    subForm->Sign();
-    subForm->Execute();
-
-    std::cout << "\n" << Yellow << Arrow_right << " Step 4: Test course creation" << Reset_Color << std::endl;
-    
-    auto rawCourseForm = secretary->CreateForm(FormType::NeedCourseCreation);
-    auto courseForm = std::dynamic_pointer_cast<NeedCourseCreationForm>(rawCourseForm);
-    
-    if (courseForm) {
-        courseForm->Fill("Defense Against the Dark Arts");
-        
-        std::cout << Red << "[Unsigned] -> " << Reset_Color;
-        courseForm->Execute();
-
-        courseForm->Sign();
-        std::cout << Green << "[Signed] -> " << Reset_Color;
-        courseForm->Execute();
+    std::cout << "\n" << Yellow << "--- Scenario 3 : L'etudiant veut s'inscrire au cours ---" << Reset_Color << std::endl;
+    if (potionsCourse) {
+        // L'étudiant interagit UNIQUEMENT avec le Headmaster[cite: 14]
+        studentHarry->AskToJoinCourse(potionsCourse.get());
     }
 
-    std::cout << "\n" << Blue << "Global check :" << Reset_Color << std::endl;
-    std::cout << "Number of courses in Singleton = " << White << CourseList::GetInstance().Get().size() << Reset_Color << " (expected : 2)" << std::endl;
+    std::cout << "\n" << Yellow << "--- Scenario 4 : L'etudiant a fini le cours ---" << Reset_Color << std::endl;
+    // Le professeur prévient le Headmaster que l'étudiant est prêt à être diplômé[cite: 13]
+    profSnape->ProposeGraduation(studentHarry.get());
 
     return 0;
 }

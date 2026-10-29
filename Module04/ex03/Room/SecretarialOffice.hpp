@@ -2,6 +2,8 @@
 
 #include "Room.hpp"
 
+class Form;
+
 class SecretarialOffice : public Room
 {
 	private :

@@ -7,10 +7,10 @@ class Course;
 class Classroom : public Room
 {
 	private :
-		Course *mCurrentRoom;
+		Course *mCurrentCourse;
 
 	public :
-		Classroom() : mCurrentRoom(nullptr) {
+		Classroom() : mCurrentCourse(nullptr) {
 		}
 
 		void AssignCourse(Course *aCourse);

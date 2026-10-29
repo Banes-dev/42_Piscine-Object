@@ -12,17 +12,17 @@ class Headmaster;
 class Professor : public Staff
 {
 	private :
-		std::shared_ptr<Course> *mCurrentCourse;
-		std::shared_ptr<Headmaster> *mHeadmaster;
+		Course *mCurrentCourse;
+		Headmaster *mHeadmaster;
 
 	public :
 		Professor(std::string aName) : Staff(aName), mCurrentCourse(nullptr), mHeadmaster(nullptr) {
 		}
 		~Professor() override = default;
 
-		void AssignHeadmaster(std::shared_ptr<Headmaster> aHeadmaster);
+		void AssignHeadmaster(Headmaster *aHeadmaster);
 
-		void AssignCourse(std::shared_ptr<Course> *aCourse);
+		void AssignCourse(Course *aCourse);
 		void DoClass();
 		void CloseCourse();
 

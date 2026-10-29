@@ -12,7 +12,7 @@
 
 int main()
 {
-    std::cout << Cyan << "--- Exercise 02: Factory and Command ---" << Reset_Color << std::endl;
+    std::cout << Cyan << "--- Exercise 02 : Factory and Command ---" << Reset_Color << std::endl;
 
     // Init actors
     auto secretary = std::make_shared<Secretary>("Peggy");
@@ -22,7 +22,7 @@ int main()
 
     CourseList::GetInstance().Add(potionsCourse);
 
-    std::cout << "\n" << Yellow << Arrow_right << " Step 1: Secretary creates a subscription form" << Reset_Color << std::endl;
+    std::cout << "\n" << Yellow << Arrow_right << " Step 1 : Secretary creates a subscription form" << Reset_Color << std::endl;
     
     std::shared_ptr<Form> rawForm = secretary->CreateForm(FormType::SubscriptionToCourse);
     auto subForm = std::dynamic_pointer_cast<SubscriptionToCourseForm>(rawForm);
@@ -33,17 +33,17 @@ int main()
         subForm->Fill(student, potionsCourse);
     }
 
-    std::cout << "\n" << Red << Arrow_right << " Step 2: Attempt execution WITHOUT signature" << Reset_Color << std::endl;
+    std::cout << "\n" << Red << Arrow_right << " Step 2 : Attempt execution WITHOUT signature" << Reset_Color << std::endl;
     
     // Should fail
     subForm->Execute();
 
-    std::cout << "\n" << Green << Arrow_right << " Step 3: Headmaster signs and executes the form" << Reset_Color << std::endl;
+    std::cout << "\n" << Green << Arrow_right << " Step 3 : Headmaster signs and executes the form" << Reset_Color << std::endl;
     
     subForm->Sign();
     subForm->Execute();
 
-    std::cout << "\n" << Yellow << Arrow_right << " Step 4: Test course creation" << Reset_Color << std::endl;
+    std::cout << "\n" << Yellow << Arrow_right << " Step 4 : Test course creation" << Reset_Color << std::endl;
     
     auto rawCourseForm = secretary->CreateForm(FormType::NeedCourseCreation);
     auto courseForm = std::dynamic_pointer_cast<NeedCourseCreationForm>(rawCourseForm);

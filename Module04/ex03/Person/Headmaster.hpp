@@ -29,9 +29,9 @@ class Headmaster : public Staff
 		void AsssignSecretary(std::shared_ptr<Secretary> aSecretary);
 
 		// Mediator
-		void RequestGraduation(std::shared_ptr<Student> aStudent, std::shared_ptr<Course> aCourse);
+		void RequestGraduation(Student *aStudent, Course *aCourse);
 		void RequestCourseCreation(std::string aCourseName);
-		void RequestCourseSubscription(std::shared_ptr<Student> aStudent, std::shared_ptr<Course> aCourse);
+		void RequestCourseSubscription(Student *aStudent, Course *aCourse);
 		void RequestRoomCreation();
 
 		// Exceptions

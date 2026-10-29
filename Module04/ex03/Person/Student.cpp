@@ -4,9 +4,9 @@
 #include "../Course.hpp"
 
 
-void Student::AssignHeadmaster(std::shared_ptr<Headmaster> aHeadmaster)
+void Student::AssignHeadmaster(Headmaster *aHeadmaster)
 {
-    mHeadmaster = &aHeadmaster;
+    mHeadmaster = aHeadmaster;
 }
 
 void Student::AttendClass(Classroom *aClassroom)
@@ -26,7 +26,7 @@ void Student::Graduate(Course *aCourse)
 	std::cout << "[Student]" << " Graduated for the course " << aCourse->GetName() << std::endl;
 }
 
-void Student::AskToJoinCourse(std::shared_ptr<Course> aCourse)
+void Student::AskToJoinCourse(Course *aCourse)
 {
     if (mHeadmaster == nullptr)
 	{

@@ -12,11 +12,11 @@ void SubscriptionToCourseForm::Execute()
 		std::cout << "[SubscriptionToCourseForm]" << " Course or Student is null !" << std::endl;
 		return;
 	}
-	mCourse->Subscribe(mStudent.get());
+	mCourse->Subscribe(mStudent);
     std::cout << "Executing Subscription To Course Form..." << std::endl;
 }
 
-void SubscriptionToCourseForm::Fill(std::shared_ptr<Student> aStudent, std::shared_ptr<Course> aCourse)
+void SubscriptionToCourseForm::Fill(Student *aStudent, Course *aCourse)
 {
     mStudent = aStudent;
     mCourse = aCourse;

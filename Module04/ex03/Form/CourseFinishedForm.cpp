@@ -12,11 +12,11 @@ void CourseFinishedForm::Execute()
 		std::cout << "[CourseFinishedForm]" << " Course or Student is null !" << std::endl;
 		return;
 	}
-	mStudent->Graduate(mCourse.get());
+	mStudent->Graduate(mCourse);
     std::cout << "Executing Course Finished Form..." << std::endl;
 }
 
-void CourseFinishedForm::Fill(std::shared_ptr<Student> aStudent, std::shared_ptr<Course> aCourse)
+void CourseFinishedForm::Fill(Student *aStudent, Course *aCourse)
 {
     mStudent = aStudent;
     mCourse = aCourse;

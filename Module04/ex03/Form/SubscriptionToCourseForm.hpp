@@ -13,8 +13,8 @@ class Student;
 class SubscriptionToCourseForm : public Form
 {
 	private :
-		std::shared_ptr<Course> mCourse;
-		std::shared_ptr<Student> mStudent;
+		Course *mCourse;
+		Student *mStudent;
 
 	public :
 		SubscriptionToCourseForm() : Form(FormType::SubscriptionToCourse), mCourse(nullptr), mStudent(nullptr) {
@@ -22,5 +22,5 @@ class SubscriptionToCourseForm : public Form
 		~SubscriptionToCourseForm() override = default;
 
 		void Execute() override;
-		void Fill(std::shared_ptr<Student> aStudent, std::shared_ptr<Course> aCourse);
+		void Fill(Student *aStudent, Course *aCourse);
 };

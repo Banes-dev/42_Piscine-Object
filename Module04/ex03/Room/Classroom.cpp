@@ -3,5 +3,5 @@
 
 void Classroom::AssignCourse(Course *aCourse)
 {
-    mCurrentRoom = aCourse;
+    mCurrentCourse = aCourse;
 }

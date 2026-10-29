@@ -23,7 +23,7 @@ void Headmaster::AsssignSecretary(std::shared_ptr<Secretary> aSecretary)
 }
 
 // Mediator
-void Headmaster::RequestGraduation(std::shared_ptr<Student> aStudent, std::shared_ptr<Course> aCourse)
+void Headmaster::RequestGraduation(Student *aStudent, Course *aCourse)
 {
     if (mSecretary == nullptr)
     {
@@ -60,7 +60,7 @@ void Headmaster::RequestCourseCreation(std::string aCourseName)
     }
 }
 
-void Headmaster::RequestCourseSubscription(std::shared_ptr<Student> aStudent, std::shared_ptr<Course> aCourse)
+void Headmaster::RequestCourseSubscription(Student *aStudent, Course *aCourse)
 {
     if (mSecretary == nullptr)
     {

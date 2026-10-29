@@ -2,12 +2,12 @@
 #include "Headmaster.hpp"
 #include "../Course.hpp"
 
-void Professor::AssignHeadmaster(std::shared_ptr<Headmaster> aHeadmaster)
+void Professor::AssignHeadmaster(Headmaster *aHeadmaster)
 {
-    mCurrentHeadmaster = &aHeadmaster;
+    mHeadmaster = aHeadmaster;
 }
 
-void Professor::AssignCourse(std::shared_ptr<Course> *aCourse)
+void Professor::AssignCourse(Course *aCourse)
 {
     mCurrentCourse = aCourse;
 }
@@ -28,7 +28,7 @@ void Professor::AskForNewCourse(std::string aCourseName)
 		throw HeadmasterNotAssignedException();
 		return;
 	}
-    mHeadmaster->RequestCourseCreation(this, aCourseName);
+    mHeadmaster->RequestCourseCreation(aCourseName);
 
 }
 
