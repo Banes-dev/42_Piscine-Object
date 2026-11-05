@@ -26,7 +26,7 @@ class Headmaster : public Staff
 		void ReceiveForm(Form *aForm);
 
 		// Secretary
-		void AsssignSecretary(std::shared_ptr<Secretary> aSecretary);
+		void AssignSecretary(std::shared_ptr<Secretary> aSecretary);
 
 		// Mediator
 		void RequestGraduation(Student *aStudent, Course *aCourse);

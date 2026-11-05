@@ -17,7 +17,7 @@ void Headmaster::ReceiveForm(Form* aForm)
 }
 
 // Secretary
-void Headmaster::AsssignSecretary(std::shared_ptr<Secretary> aSecretary)
+void Headmaster::AssignSecretary(std::shared_ptr<Secretary> aSecretary)
 {
     mSecretary = aSecretary;
 }

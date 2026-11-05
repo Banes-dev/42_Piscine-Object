@@ -17,7 +17,7 @@ int main()
     auto headmaster = std::make_shared<Headmaster>("Albus Dumbledore");
     
     // On relie la Secrétaire au Headmaster (Médiateur)
-    headmaster->AsssignSecretary(secretary);
+    headmaster->AssignSecretary(secretary);
 
     auto profSnape = std::make_shared<Professor>("Severus Snape");
     auto studentHarry = std::make_shared<Student>("Harry Potter");
