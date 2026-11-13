@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Color.hpp"
-#include "Simulation.hpp"
+#include "Simulation/Simulation.hpp"
 
 int main(int aArgc, char **aArgv)
 {
@@ -12,7 +12,7 @@ int main(int aArgc, char **aArgv)
 		return 1;
 	}
 
-	// Parse 2 info file & launch the simulation
+	// Parse info file & launch the simulation
 	try
     {
         std::string vRailFile = aArgv[1];

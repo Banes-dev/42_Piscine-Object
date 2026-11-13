@@ -4,7 +4,7 @@ CFLAGS = -g -Wall -Wextra -Werror -std=c++20
 
 # Normal
 NAME =  Train_yourself
-FUNC = main.cpp
+FUNC = main.cpp Network/Node.cpp Network/Rail.cpp Network/Network.cpp Network/NetworkFactory.cpp
 OBJS = $(FUNC:.cpp=.o)
 
 
