@@ -1,6 +1,8 @@
 Node CityA
 Node CityB
 Node CityC
+Node CityZ
+Node CityLong
 Node RailNodeA
 Node RailNodeB
 Node RailNodeC
@@ -22,3 +24,4 @@ Rail RailNodeA RailNodeD 23.02 250.0
 Rail RailNodeA RailNodeE 19.0 250.0
 Rail RailNodeA RailNodeG 6.7 150.0
 Rail RailNodeB RailNodeD 20.24 225.0
+Rail CityA CityLong 442.0 142.0

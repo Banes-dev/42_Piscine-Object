@@ -6,6 +6,7 @@
 #include "../Network/NetworkFactory.hpp"
 #include "../Train/TrainFactory.hpp"
 #include "DijkstraPathfinder.hpp"
+#include "../Event/RandomEventGenerator.hpp"
 
 
 void Simulation::LoadNetwork(const std::string &aFilename)
@@ -28,6 +29,7 @@ void Simulation::LoadTrains(const std::string &aFilename)
 void Simulation::Run()
 {
     DijkstraPathfinder vPathfinder;
+	RandomEventGenerator vEventGen;
 
     // Calculate paths for all trains before starting
     for (auto &vTrain : mTrains)
@@ -37,6 +39,7 @@ void Simulation::Run()
         
         std::vector<Rail *> vPath = vPathfinder.CalculatePath(mNetwork, vStart, vEnd);
         vTrain->SetPath(vPath);
+		vEventGen.AddObserver(vTrain.get());
     }
 
     std::cout << "Starting simulation with " << mTrains.size() << " trains..." << std::endl;
@@ -49,18 +52,26 @@ void Simulation::Run()
     {
         vSimulationRunning = false;
 
+		vEventGen.Generate(mNetwork);
+
+        for (auto &vTrain : mTrains)
+        {
+            if (vTrain->IsActive())
+                vTrain->DetectObstacles(mTrains);
+        }
+
         for (auto &vTrain : mTrains)
         {
             if (!vTrain->HasFinished())
             {
-                vSimulationRunning = true; // Still at least one train running
+                vSimulationRunning = true;
 
                 if (!vTrain->IsActive())
                     vTrain->TryStart(vCurrentTimeMinutes);
 
                 if (vTrain->IsActive())
                 {
-                    // Update physical movement for 1 minute (aDeltaTimeMinutes = 1.0)
+					// Update physical movement for 1 minute (aDeltaTimeMinutes = 1.0)
                     vTrain->UpdatePhysics(1.0);
                     vTrain->WriteTickLog(vCurrentTimeMinutes);
                 }

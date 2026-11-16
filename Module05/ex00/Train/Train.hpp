@@ -2,10 +2,13 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
+#include <memory>
 
 #include "../Network/Rail.hpp"
+#include "../Event/IObserver.hpp"
 
-class Train 
+class Train : public IObserver
 {
 	private :
 		std::string mName;
@@ -26,21 +29,34 @@ class Train
 		bool mHasFinished;
 		std::string mCurrentStateStr;  	// "Speed up", "Braking", "Maintain", "Stopped"
 
+		double mDistanceToObstacle; 	// In km (-1.0 if no obstacle)
+		int mBlockingTrainCell;     	// Index for the 'O' in the ASCII graph
+
+		std::ofstream mLogFile;
+		void InitLogFile();
+
+		int mEventDelayTimer;
+
 	public :
-		Train(const std::string &aName, double aWeight, double aFriction, double aMaxAccel, double aMaxBrake, const std::string &aDepStation,
-			const std::string &aArrStation,const int &aDepTime, const int &aStopDuration);
+		Train(const std::string &aName, double aWeight, double aFriction, double aMaxAccel, double aMaxBrake,
+			const std::string &aDepStation, const std::string &aArrStation, int aDepTime, int aStopDuration);
+
+		~Train();
 
 		void SetPath(const std::vector<Rail *> &aPath);
 		const std::vector<Rail *> &GetPath() const;
 
-		void UpdatePhysics(double aDeltaTimeMinutes); // Called every minute of the simulation
+		size_t GetCurrentRailIndex() const;
+		double GetDistanceOnCurrentRail() const;
+		void DetectObstacles(const std::vector<std::unique_ptr<Train>> &aAllTrains);
 
-		void TryStart(int aCurrentTimeMinutes); // Check if the train should start based on current simulation time
-
+		void UpdatePhysics(double aDeltaTimeMinutes);
+		void TryStart(int aCurrentTimeMinutes);
 		bool IsActive() const;
 		bool HasFinished() const;
+		void WriteTickLog(int aCurrentTimeMinutes);
 
-		void WriteTickLog(int aCurrentTimeMinutes) const; // Outputs the specific ASCII log format requested
+		void OnEvent(const std::string &aLocationName, const std::string &aEventType, int aDurationMinutes) override;
 
 		// Getters
 		const std::string &GetName() const;

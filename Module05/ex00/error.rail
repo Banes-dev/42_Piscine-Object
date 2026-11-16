@@ -1,0 +1,21 @@
+Node CityA
+Node CityB
+Node CityC
+Node RailNodeA
+
+Rail CityA 15.0 250.0
+
+Rail CityB GhostTown 10.0 150.0
+
+Station CityD
+
+
+
+// Erreur 1 : Syntaxe incorrecte pour un Rail (il manque la ville d'arrivée)
+Rail CityA 15.0 250.0
+
+// Erreur 2 : La ville "GhostTown" n'a jamais été déclarée comme Node
+Rail CityB GhostTown 10.0 150.0
+
+// Erreur 3 : Type inconnu (ni Node, ni Rail)
+Station CityD

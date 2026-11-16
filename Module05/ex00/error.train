@@ -1,0 +1,17 @@
+TrainFailTime 80 0.05 356.0 30.0 CityA CityB 14:10 00h10
+
+TrainMissingArg 60 0.05 412.0 40.0 CityA CityC 14h20
+
+TrainNoPath 40 0.05 356.0 30.0 CityA CityZ 14h24 00h10
+
+
+
+// Erreur 1 : Format de l'heure invalide ("14:10" au lieu de "14h10")
+TrainFailTime 80 0.05 356.0 30.0 CityA CityB 14:10 00h10
+
+// Erreur 2 : Il manque un argument (le temps d'arrêt à la fin)
+TrainMissingArg 60 0.05 412.0 40.0 CityA CityC 14h20
+
+// Erreur 3 (Si testé avec un réseau valide) : Aucun chemin possible (Dijkstra)
+// Supposons que "CityZ" soit dans le .rail mais n'ait aucun rail connecté
+TrainNoPath 40 0.05 356.0 30.0 CityA CityZ 14h24 00h10

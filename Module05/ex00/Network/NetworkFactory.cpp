@@ -12,7 +12,7 @@ Network NetworkFactory::BuildNetwork(const std::string &aFilename)
     std::ifstream vFile(aFilename);
 
     if (!vFile.is_open())
-        throw std::runtime_error("Could not open network file: " + aFilename);
+        throw std::runtime_error("Could not open network file : " + aFilename);
 
     std::string vLine;
     while (std::getline(vFile, vLine))
@@ -55,7 +55,7 @@ void NetworkFactory::ParseRail(Network &aNetwork, const std::string &aLine)
 
     // Syntax = Rail CityA CityB Length MaxSpeed
     if (!(vStream >> vType >> vCityA >> vCityB >> vLength >> vMaxSpeed) || !vStream.eof())
-        throw std::runtime_error("Invalid Rail syntax: " + aLine);
+        throw std::runtime_error("Invalid Rail syntax : " + aLine);
 
     aNetwork.AddRail(vCityA, vCityB, vLength, vMaxSpeed);
 }
