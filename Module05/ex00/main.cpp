@@ -1,8 +1,10 @@
 #include <iostream>
 #include <string>
+#include <map>
 
 #include "Color.hpp"
 #include "Simulation/Simulation.hpp"
+#include "Simulation/TimeUtils.hpp"
 
 static void PrintHelp()
 {
@@ -31,12 +33,36 @@ int main(int aArgc, char **aArgv)
         std::string vRailFile = aArgv[1];
         std::string vTrainFile = aArgv[2];
 
-        Simulation vSim;
-        vSim.LoadNetwork(vRailFile);
-        vSim.LoadTrains(vTrainFile);
+        // Simulation vSim;
+        // vSim.LoadNetwork(vRailFile);
+        // vSim.LoadTrains(vTrainFile);
         
-        vSim.Run();
+        // vSim.Run();
+
+		int vNbRuns = 10;
+        std::map<std::string, int> vTotalTimes;
+
+        std::cout << "Running simulation " << vNbRuns << " times to compute average...\n";
+
+        for (int i = 0; i < vNbRuns; ++i)
+        {
+            Simulation vSim;
+            vSim.LoadNetwork(vRailFile);
+            vSim.LoadTrains(vTrainFile);
+            
+            std::map<std::string, int> vRunResults = vSim.Run();
+            
+            for (const auto &vPair : vRunResults)
+                vTotalTimes[vPair.first] += vPair.second;
+        }
         
+        std::cout << Cyan << "\n--- AVERAGE TRAVEL TIMES (" << vNbRuns << " RUNS) ---\n" << Reset_Color;
+        for (const auto &vPair : vTotalTimes)
+        {
+            int vAverageTime = vPair.second / vNbRuns;
+            std::cout << "- Train " << vPair.first << " : " << TimeUtils::MinToStr(vAverageTime) << "\n";
+        }
+
         std::cout << Valid << Green << " Simulation completed successfully" << Reset_Color << std::endl;
     } 
     catch (const std::exception &e)

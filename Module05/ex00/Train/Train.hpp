@@ -37,6 +37,8 @@ class Train : public IObserver
 
 		int mEventDelayTimer;
 
+		int mActualTravelTime;
+
 	public :
 		Train(const std::string &aName, double aWeight, double aFriction, double aMaxAccel, double aMaxBrake,
 			const std::string &aDepStation, const std::string &aArrStation, int aDepTime, int aStopDuration);
@@ -68,4 +70,5 @@ class Train : public IObserver
 		const std::string &GetArrStation() const;
 		const int &GetDepTime() const;
 		const int &GetStopDuration() const;
+		const int &GetActualTravelTime() const;
 };

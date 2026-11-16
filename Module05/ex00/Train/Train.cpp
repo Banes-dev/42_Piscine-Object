@@ -12,7 +12,7 @@ Train::Train(const std::string &aName, double aWeight, double aFriction, double 
 	const std::string &aDepStation,const std::string &aArrStation, int aDepTime, int aStopDuration)
     : mName(aName), mWeight(aWeight), mFriction(aFriction), mMaxAccel(aMaxAccel), mMaxBrake(aMaxBrake), mDepStation(aDepStation), mArrStation(aArrStation),mDepTime(aDepTime),
 	mStopDuration(aStopDuration),mCurrentRailIndex(0), mCurrentSpeed(0.0), mDistanceOnCurrentRail(0.0),mIsActive(false), mHasFinished(false), mCurrentStateStr("Stopped"),
-	mDistanceToObstacle(-1.0), mBlockingTrainCell(-1), mEventDelayTimer(0)
+	mDistanceToObstacle(-1.0), mBlockingTrainCell(-1), mEventDelayTimer(0), mActualTravelTime(0)
 {
 }
 
@@ -120,8 +120,11 @@ void Train::TryStart(int aCurrentTimeMinutes)
 
 void Train::UpdatePhysics(double aDeltaTimeMinutes)
 {
-    if (!mIsActive || mHasFinished || mPath.empty())
+    if (!mIsActive || mHasFinished || mPath.empty()) {
         return;
+	}
+
+	mActualTravelTime++;
 
 	// Check if the train is currently at the location of the event
     if (mEventDelayTimer > 0)
@@ -336,4 +339,9 @@ const int &Train::GetDepTime() const
 const int &Train::GetStopDuration() const
 {
     return mStopDuration;
+}
+
+const int &Train::GetActualTravelTime() const
+{
+	return mActualTravelTime;
 }

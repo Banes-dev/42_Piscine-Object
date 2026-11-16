@@ -26,7 +26,8 @@ void Simulation::LoadTrains(const std::string &aFilename)
     }
 }
 
-void Simulation::Run()
+// void Simulation::Run()
+std::map<std::string, int> Simulation::Run()
 {
     DijkstraPathfinder vPathfinder;
 	RandomEventGenerator vEventGen;
@@ -80,4 +81,9 @@ void Simulation::Run()
 
         vCurrentTimeMinutes++;
     }
+	// Return a map of train names to their actual travel times
+	std::map<std::string, int> vResults;
+    for (const auto &vTrain : mTrains)
+        vResults[vTrain->GetName()] = vTrain->GetActualTravelTime();
+    return vResults;
 }
