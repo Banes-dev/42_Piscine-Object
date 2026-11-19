@@ -6,24 +6,22 @@
 #include "Simulation/Simulation.hpp"
 #include "Simulation/TimeUtils.hpp"
 
-static void PrintHelp()
-{
-    std::cout << Cyan << "\n--- Help : How to create input files ---\n" << Reset_Color
-              << Purple << "1. Rail network (.rail) format:\n" << Reset_Color
-              << "   Node [CityName]\n"
-              << "   Rail [CityA] [CityB] [Length_km] [MaxSpeed_kmh]\n"
-              << Purple << "2. Trains (.train) format:\n" << Reset_Color
-              << "   [Name] [Weight_t] [Friction] [MaxAccel_kN] [MaxBrake_kN] [DepCity] [ArrCity] [Time] [StopDuration]\n"
-              << "   Example : TrainAB 80 0.05 356.0 30.0 CityA CityB 14h10 00h10\n" << std::endl;
-}
 
 int main(int aArgc, char **aArgv)
 {
+	if (aArgc == 2 && std::string(aArgv[1]) == "-help")
+	{
+		    std::cout << Cyan << "\n--- Help : How to create input files ---\n" << Reset_Color
+              << Purple << "1. Rail network (.rail) format:\n" << Reset_Color << "   Node [CityName]\n" << "   Rail [CityA] [CityB] [Length_km] [MaxSpeed_kmh]\n"
+              << Purple << "2. Trains (.train) format:\n" << Reset_Color
+              << "   [Name] [Weight_t] [Friction] [MaxAccel_kN] [MaxBrake_kN] [DepCity] [ArrCity] [Time] [StopDuration]\n"
+              << "   Example : TrainAB 80 0.05 356.0 30.0 CityA CityB 14h10 00h10\n" << std::endl;
+			return 1;
+	}
 	// Check args
 	if (aArgc != 3)
 	{
 		std::cerr << Deny << Red << " Error wrong args\n" << Yellow << "Try : ./Train_Yourself [file].rail [file].train" << Reset_Color << std::endl;
-		PrintHelp();
 		return 1;
 	}
 
