@@ -12,6 +12,7 @@ class Train : public IObserver
 {
 	private :
 		std::string mName;
+		unsigned int mId;
 		double mWeight;          		// in metric ton
 		double mFriction;        		// Coefficient de friction
 		double mMaxAccel;        		// in kilonewtons (kN)
@@ -34,13 +35,16 @@ class Train : public IObserver
 
 		std::ofstream mLogFile;
 		void InitLogFile();
+		Node *GetCurrentStartNode() const;
+		Node *GetCurrentEndNode() const;
 
 		int mEventDelayTimer;
+		int mStationStopTimer;
 
 		int mActualTravelTime;
 
 	public :
-		Train(const std::string &aName, double aWeight, double aFriction, double aMaxAccel, double aMaxBrake,
+		Train(unsigned int aId, const std::string &aName, double aWeight, double aFriction, double aMaxAccel, double aMaxBrake,
 			const std::string &aDepStation, const std::string &aArrStation, int aDepTime, int aStopDuration);
 
 		~Train();
@@ -62,6 +66,7 @@ class Train : public IObserver
 
 		// Getters
 		const std::string &GetName() const;
+		unsigned int GetId() const;
 		double GetWeight() const;
 		double GetFriction() const;
 		double GetMaxAccel() const;

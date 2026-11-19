@@ -5,6 +5,8 @@
 
 void Network::AddNode(const std::string &aName)
 {
+    if (aName.empty())
+        throw std::runtime_error("Node name cannot be empty");
     if (mNodes.find(aName) != mNodes.end())
         throw std::runtime_error("Node already exists : " + aName);
 
@@ -13,6 +15,10 @@ void Network::AddNode(const std::string &aName)
 
 void Network::AddRail(const std::string &aCityA, const std::string &aCityB, double aLength, double aMaxSpeed)
 {
+    if (aLength <= 0.0 || aMaxSpeed <= 0.0)
+        throw std::runtime_error("Rail length and maximum speed must be positive");
+    if (aCityA == aCityB)
+        throw std::runtime_error("A rail cannot connect a node to itself");
     Node *vNodeA = GetNode(aCityA);
     Node *vNodeB = GetNode(aCityB);
 

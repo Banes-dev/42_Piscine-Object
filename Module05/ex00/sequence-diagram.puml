@@ -1,0 +1,30 @@
+@startuml
+actor User
+participant main
+participant Simulation
+participant NetworkFactory
+participant TrainFactory
+participant DijkstraPathfinder
+participant RandomEventGenerator
+participant Train
+
+User -> main: network.rail, trains.train
+main -> Simulation: LoadNetwork(file)
+Simulation -> NetworkFactory: BuildNetwork(file)
+NetworkFactory --> Simulation: Network
+main -> Simulation: LoadTrains(file)
+Simulation -> TrainFactory: BuildTrains(file)
+TrainFactory --> Simulation: unique trains
+main -> Simulation: Run()
+Simulation -> DijkstraPathfinder: CalculatePath(network, start, end)
+DijkstraPathfinder --> Simulation: optimal path
+loop simulation ticks
+  Simulation -> RandomEventGenerator: Generate(network)
+  RandomEventGenerator -> Train: OnEvent(...)
+  Simulation -> Train: DetectObstacles(trains)
+  Simulation -> Train: UpdatePhysics(1 minute)
+  Simulation -> Train: WriteTickLog(time)
+end
+Simulation --> main: travel times
+main --> User: average travel times
+@enduml

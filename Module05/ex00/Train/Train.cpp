@@ -8,11 +8,11 @@
 #include "../Simulation/TimeUtils.hpp"
 
 
-Train::Train(const std::string &aName, double aWeight, double aFriction, double aMaxAccel, double aMaxBrake,
+Train::Train(unsigned int aId, const std::string &aName, double aWeight, double aFriction, double aMaxAccel, double aMaxBrake,
 	const std::string &aDepStation,const std::string &aArrStation, int aDepTime, int aStopDuration)
-    : mName(aName), mWeight(aWeight), mFriction(aFriction), mMaxAccel(aMaxAccel), mMaxBrake(aMaxBrake), mDepStation(aDepStation), mArrStation(aArrStation),mDepTime(aDepTime),
+    : mName(aName), mId(aId), mWeight(aWeight), mFriction(aFriction), mMaxAccel(aMaxAccel), mMaxBrake(aMaxBrake), mDepStation(aDepStation), mArrStation(aArrStation),mDepTime(aDepTime),
 	mStopDuration(aStopDuration),mCurrentRailIndex(0), mCurrentSpeed(0.0), mDistanceOnCurrentRail(0.0),mIsActive(false), mHasFinished(false), mCurrentStateStr("Stopped"),
-	mDistanceToObstacle(-1.0), mBlockingTrainCell(-1), mEventDelayTimer(0), mActualTravelTime(0)
+	mDistanceToObstacle(-1.0), mBlockingTrainCell(-1), mEventDelayTimer(0), mStationStopTimer(0), mActualTravelTime(0)
 {
 }
 
@@ -30,16 +30,50 @@ void Train::InitLogFile()
     if (!mLogFile.is_open())
         throw std::runtime_error("Cannot create log file for train : " + mName);
 
-    // Basic time estimation (Total distance / Max Speed constraint)
-    double vTotalDist = 0.0;
+    // Estimate each rail using the train's net acceleration and rail speed limit.
+    double vEstimatedSeconds = 0.0;
+    double vMassKg = mWeight * 1000.0;
+    double vAcceleration = (mMaxAccel * 1000.0 - mFriction * vMassKg * 9.81) / vMassKg;
+    if (vAcceleration <= 0.0)
+        throw std::runtime_error("Train " + mName + " cannot overcome friction");
     for (Rail *vRail : mPath)
-        vTotalDist += vRail->GetLength();
+    {
+        double vDistanceMeters = vRail->GetLength() * 1000.0;
+        double vSpeedMs = vRail->GetMaxSpeed() / 3.6;
+        double vAccelerationDistance = (vSpeedMs * vSpeedMs) / (2.0 * vAcceleration);
+        if (vAccelerationDistance >= vDistanceMeters)
+            vEstimatedSeconds += std::sqrt((2.0 * vDistanceMeters) / vAcceleration);
+        else
+            vEstimatedSeconds += (vSpeedMs / vAcceleration)
+                + ((vDistanceMeters - vAccelerationDistance) / vSpeedMs);
+    }
+    if (mPath.size() > 1)
+        vEstimatedSeconds += static_cast<double>(mStopDuration) * 60.0 * (mPath.size() - 1);
 
-    // Very rough estimation in minutes (assuming average speed around 150km/h)
-    int vEstimatedMinutes = static_cast<int>((vTotalDist / 150.0) * 60.0);
+    int vEstimatedMinutes = static_cast<int>(std::ceil(vEstimatedSeconds / 60.0));
 
     mLogFile << "Train : " << mName << "\n";
     mLogFile << "Final travel time : " << TimeUtils::MinToStr(vEstimatedMinutes) << "m\n\n";
+}
+
+Node *Train::GetCurrentStartNode() const
+{
+    Node *vCurrentNode = mPath[0]->GetNodeA()->GetName() == mDepStation
+        ? mPath[0]->GetNodeA() : mPath[0]->GetNodeB();
+    for (size_t i = 0; i < mCurrentRailIndex; ++i)
+    {
+        Rail *vRail = mPath[i];
+        vCurrentNode = vRail->GetNodeA() == vCurrentNode
+            ? vRail->GetNodeB() : vRail->GetNodeA();
+    }
+    return vCurrentNode;
+}
+
+Node *Train::GetCurrentEndNode() const
+{
+    Node *vStart = GetCurrentStartNode();
+    Rail *vCurrent = mPath[mCurrentRailIndex];
+    return vCurrent->GetNodeA() == vStart ? vCurrent->GetNodeB() : vCurrent->GetNodeA();
 }
 
 void Train::SetPath(const std::vector<Rail *> &aPath)
@@ -91,7 +125,10 @@ void Train::DetectObstacles(const std::vector<std::unique_ptr<Train>> &aAllTrain
                 if (mDistanceToObstacle < 0.0 || vDistBetweenKm < mDistanceToObstacle)
                 {
                     mDistanceToObstacle = vDistBetweenKm;
-                    mBlockingTrainCell = static_cast<int>(vOther->GetDistanceOnCurrentRail());
+                    double vOtherDistanceTravelled = vOther->GetDistanceOnCurrentRail();
+                    for (size_t i = 0; i < vOther->GetCurrentRailIndex(); ++i)
+                        vOtherDistanceTravelled += vOther->GetPath()[i]->GetLength();
+                    mBlockingTrainCell = static_cast<int>(vOtherDistanceTravelled);
                 }
             }
         }
@@ -131,6 +168,13 @@ void Train::UpdatePhysics(double aDeltaTimeMinutes)
     {
         mEventDelayTimer--;
         mCurrentSpeed = 0.0;
+        return;
+    }
+    if (mStationStopTimer > 0)
+    {
+        mStationStopTimer--;
+        mCurrentSpeed = 0.0;
+        mCurrentStateStr = "Stopped";
         return;
     }
 
@@ -228,6 +272,12 @@ void Train::UpdatePhysics(double aDeltaTimeMinutes)
     {
         mDistanceOnCurrentRail -= mPath[mCurrentRailIndex]->GetLength();
         mCurrentRailIndex++;
+        if (mCurrentRailIndex < mPath.size())
+        {
+            mStationStopTimer = mStopDuration;
+            mCurrentSpeed = 0.0;
+            mCurrentStateStr = "Stopped";
+        }
     }
 
     // Stop safely if we accidentally overshot the last rail
@@ -247,22 +297,24 @@ void Train::WriteTickLog(int aCurrentTimeMinutes)
     if (!mLogFile.is_open() || mPath.empty())
         return;
 
-    // Calculate total remaining distance
+    // Calculate total remaining distance and progress over the complete path.
     double vTotalDistanceLeftKm = mPath[mCurrentRailIndex]->GetLength() - mDistanceOnCurrentRail;
+    double vDistanceTravelledKm = mDistanceOnCurrentRail;
     for (size_t i = mCurrentRailIndex + 1; i < mPath.size(); ++i)
         vTotalDistanceLeftKm += mPath[i]->GetLength();
+    for (size_t i = 0; i < mCurrentRailIndex; ++i)
+        vDistanceTravelledKm += mPath[i]->GetLength();
 
     if (vTotalDistanceLeftKm < 0.0)
         vTotalDistanceLeftKm = 0.0;
 
-    Rail *vCurrentRail = mPath[mCurrentRailIndex];
-
 	// Build the ASCII graph (one cell per km)
-    int vTotalCells = static_cast<int>(vCurrentRail->GetLength());
+    double vTotalPathLength = vTotalDistanceLeftKm + vDistanceTravelledKm;
+    int vTotalCells = static_cast<int>(std::ceil(vTotalPathLength));
     if (vTotalCells < 1) 
         vTotalCells = 1;
         
-    int vCurrentCell = static_cast<int>(mDistanceOnCurrentRail);
+    int vCurrentCell = static_cast<int>(vDistanceTravelledKm);
     if (vCurrentCell >= vTotalCells)
         vCurrentCell = vTotalCells - 1;
 
@@ -277,9 +329,12 @@ void Train::WriteTickLog(int aCurrentTimeMinutes)
             vGraph += "[]";
     }
 
-    mLogFile << "[" << TimeUtils::MinToStr(aCurrentTimeMinutes) << "] " << "[" << std::setw(10) << vCurrentRail->GetNodeA()->GetName() << "] "
-		<< "[" << std::setw(10) << vCurrentRail->GetNodeB()->GetName() << "]\n" << "[" << std::fixed << std::setprecision(2) << std::setw(5) << std::setfill('0')
-		<< vTotalDistanceLeftKm << "km]\n" << "[" << std::setw(10) << std::setfill(' ') << mCurrentStateStr << "]\n" << vGraph << "\n\n";
+    mLogFile << "[" << TimeUtils::MinToStr(aCurrentTimeMinutes - mDepTime) << "] - ["
+		<< std::setw(10) << GetCurrentStartNode()->GetName() << "] - ["
+		<< std::setw(10) << GetCurrentEndNode()->GetName() << "] - ["
+		<< std::fixed << std::setprecision(2) << std::setw(5) << std::setfill('0')
+		<< vTotalDistanceLeftKm << "km] - [" << std::setw(10) << std::setfill(' ') << mCurrentStateStr
+		<< "] - " << vGraph << "\n";
 }
 
 void Train::OnEvent(const std::string &aLocationName, const std::string &aEventType, int aDurationMinutes)
@@ -288,7 +343,7 @@ void Train::OnEvent(const std::string &aLocationName, const std::string &aEventT
         return;
     
     // If the train is currently at the location of the event
-    if (mPath[mCurrentRailIndex]->GetNodeA()->GetName() == aLocationName)
+    if (GetCurrentStartNode()->GetName() == aLocationName)
     {
         mEventDelayTimer = aDurationMinutes;
         mCurrentStateStr = aEventType;
@@ -299,6 +354,11 @@ void Train::OnEvent(const std::string &aLocationName, const std::string &aEventT
 const std::string &Train::GetName() const
 {
     return mName;
+}
+
+unsigned int Train::GetId() const
+{
+    return mId;
 }
 
 double Train::GetWeight() const

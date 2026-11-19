@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
-#include <iostream>
+#include <cmath>
 
 
 Network NetworkFactory::BuildNetwork(const std::string &aFilename)
@@ -17,7 +17,7 @@ Network NetworkFactory::BuildNetwork(const std::string &aFilename)
     std::string vLine;
     while (std::getline(vFile, vLine))
     {
-        if (vLine.empty())
+        if (vLine.empty() || vLine[0] == '#')
             continue;
 
         std::istringstream vStream(vLine);
@@ -56,6 +56,8 @@ void NetworkFactory::ParseRail(Network &aNetwork, const std::string &aLine)
     // Syntax = Rail CityA CityB Length MaxSpeed
     if (!(vStream >> vType >> vCityA >> vCityB >> vLength >> vMaxSpeed) || !vStream.eof())
         throw std::runtime_error("Invalid Rail syntax : " + aLine);
+    if (!std::isfinite(vLength) || !std::isfinite(vMaxSpeed))
+        throw std::runtime_error("Invalid Rail values : " + aLine);
 
     aNetwork.AddRail(vCityA, vCityB, vLength, vMaxSpeed);
 }

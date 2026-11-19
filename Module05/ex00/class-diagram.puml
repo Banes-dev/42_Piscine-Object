@@ -1,0 +1,40 @@
+@startuml
+class Network {
+  - mNodes
+  - mRails
+  + AddNode(name)
+  + AddRail(from, to, length, maxSpeed)
+}
+
+class Node
+class Rail
+class Train {
+  - mId
+  - mName
+  - mPath
+  + UpdatePhysics(delta)
+  + DetectObstacles(trains)
+}
+
+class NetworkFactory
+class TrainFactory
+interface IPathfinder
+class DijkstraPathfinder
+interface IObserver
+class RandomEventGenerator
+class Simulation
+
+Network "1" o-- "*" Node
+Network "1" o-- "*" Rail
+Rail "*" --> "2" Node
+Train "*" --> "*" Rail
+NetworkFactory ..> Network
+TrainFactory ..> Train
+DijkstraPathfinder ..|> IPathfinder
+RandomEventGenerator o-- "*" IObserver
+Train ..|> IObserver
+Simulation --> Network
+Simulation --> Train
+Simulation --> IPathfinder
+Simulation --> RandomEventGenerator
+@enduml
